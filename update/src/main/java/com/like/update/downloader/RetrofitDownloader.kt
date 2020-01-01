@@ -9,11 +9,17 @@ import java.io.File
 class RetrofitDownloader(application: Application) : IDownloader {
     init {
         RetrofitUtil.getInstance().apply {
-            initDownload(RequestConfig.Builder().application(application).build())
+            initDownload(RequestConfig(application))
         }
     }
 
-    override suspend fun download(url: String, downloadFile: File, threadCount: Int, deleteCache: Boolean, callbackInterval: Long): DownloadLiveData {
+    override suspend fun download(
+        url: String,
+        downloadFile: File,
+        threadCount: Int,
+        deleteCache: Boolean,
+        callbackInterval: Long
+    ): DownloadLiveData {
         return RetrofitUtil.getInstance().download(url, downloadFile, threadCount, deleteCache, callbackInterval)
     }
 
