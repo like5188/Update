@@ -1,0 +1,15 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.like.update">
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application>
+        <receiver android:name=".shower.NotificationControllerBroadcastReceiver">
+            <intent-filter>
+                <action android:name="action" />
+            </intent-filter>
+        </receiver>
+
+    </application>
+</manifest>
