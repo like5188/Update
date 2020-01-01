@@ -42,7 +42,7 @@
 ```java
     // 初始化
     private val mUpdate: Update by lazy { Update(this) }
-    // 通知栏显示更新进度
+    // 非强制更新。通知栏显示更新进度
     mUpdate.setUrl(updateInfo.downUrl, updateInfo.versionName)
     mUpdate.setShower(
         object : NotificationShower(this@MainActivity) {
@@ -65,7 +65,7 @@
         }
     )
     mUpdate.download()
-    // 对话框显示更新进度
+    // 强制更新。对话框显示更新进度
     mUpdate.setUrl(updateInfo.downUrl, updateInfo.versionName)
     mUpdate.setShower(ForceUpdateDialogShower(this.supportFragmentManager))
     mUpdate.download()
