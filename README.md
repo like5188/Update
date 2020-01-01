@@ -26,13 +26,14 @@
 在Module的gradle中加入：
 ```groovy
     dependencies {
+        // 这个库的引用不能用 compileOnly 否则 gradle:3.5.2 编译不过，但是 gradle:3.2.1 能编译通过。
         implementation 'com.github.like5188:Common:5.2.5'
 
-        compileOnly 'com.github.like5188:LibRetrofit:2.0.5'
-        compileOnly 'com.github.like5188.LiveDataBus:livedatabus:2.0.4'
+        compileOnly 'com.github.like5188:LibRetrofit:2.0.6'
+        compileOnly 'com.github.like5188.LiveDataBus:livedatabus:2.0.5'
     //    gradle 3.2.1 不需要添加这个引用 ， 升级到 3.5.2 后必须添加 ， 否则会提示找不到livedatabus_annotations中的类 。
-        compileOnly 'com.github.like5188.LiveDataBus:livedatabus_annotations:2.0.4'
-        kapt 'com.github.like5188.LiveDataBus:livedatabus_compiler:2.0.4'
+        compileOnly 'com.github.like5188.LiveDataBus:livedatabus_annotations:2.0.5'
+        kapt 'com.github.like5188.LiveDataBus:livedatabus_compiler:2.0.5'
 
         implementation 'com.github.like5188:Update:版本号'
     }
