@@ -7,14 +7,14 @@ import java.io.File
 
 class RetrofitDownloader(private val downloadRetrofit: DownloadRetrofit) : IDownloader {
 
-    override suspend fun download(
+    override suspend fun downloadFile(
         url: String,
         downloadFile: File,
         threadCount: Int,
         deleteCache: Boolean,
         callbackInterval: Long
     ): Flow<DownloadInfo> {
-        return downloadRetrofit.download(
+        return downloadRetrofit.downloadFile(
             url,
             downloadFile,
             threadCount,

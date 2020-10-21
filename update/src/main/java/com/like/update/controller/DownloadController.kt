@@ -81,7 +81,7 @@ internal class DownloadController {
 
         // 下载
         downloadJob = GlobalScope.launch(Dispatchers.Main) {
-            downloader.download(url, downloadFile)
+            downloader.downloadFile(url, downloadFile)
                 .onCompletion {
                     if (it is CancellationException && it.message == PAUSE) {
                         shower.onDownloadPaused()
@@ -94,7 +94,7 @@ internal class DownloadController {
                         DownloadInfo.Status.STATUS_RUNNING -> {
                             shower.onDownloadRunning(it.cachedSize, it.totalSize)
                         }
-                        DownloadInfo.Status.STATUS_SUCCESSFUL -> {
+                        DownloadInfo.Status.STATUS_SUCCESS -> {
                             context?.let {
                                 ApkUtils.install(it, downloadFile)
                             }

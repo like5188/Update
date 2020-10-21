@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import java.io.File
 
 interface IDownloader {
-    suspend fun download(
+    suspend fun downloadFile(
         url: String,
         downloadFile: File,
         threadCount: Int = 1,
