@@ -18,6 +18,7 @@ import com.like.livedatabus.LiveDataBus
 import com.like.retrofit.util.getCustomNetworkMessage
 import com.like.update.util.TAG_CANCEL
 import com.like.update.util.TAG_PAUSE_OR_CONTINUE
+import kotlin.math.roundToInt
 
 /**
  * 普通更新使用通知栏显示进度条
@@ -94,7 +95,7 @@ abstract class NotificationShower(private val context: Context) : IShower {
         remoteViews.setTextViewText(R.id.tv_status, status)
         remoteViews.setImageViewResource(R.id.iv_controller, if (pause) R.drawable.download_start else R.drawable.download_pause)
         if (currentSize > 0 && totalSize > 0) {
-            val progress = Math.round(currentSize.toFloat() / totalSize.toFloat() * 100)
+            val progress = (currentSize.toFloat() / totalSize.toFloat() * 100).roundToInt()
             remoteViews.setTextViewText(R.id.tv_percent, "$progress%")
             remoteViews.setTextViewText(R.id.tv_size, "${currentSize.toDataStorageUnit()}/${totalSize.toDataStorageUnit()}")
             remoteViews.setProgressBar(R.id.pb_progress, 100, progress, false)
