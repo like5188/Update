@@ -54,7 +54,7 @@ abstract class NotificationShower(private val context: Context) : IShower {
             NotificationCompat.Builder(context).setCustomBigContentView(remoteViews)// 避免显示不完全。
         }
         onBuilderCreated(builder)
-        val cancelIntent = PendingIntent.getBroadcast(
+        val deleteIntent = PendingIntent.getBroadcast(
             context,
             1,
             Intent("action").apply {
@@ -63,7 +63,7 @@ abstract class NotificationShower(private val context: Context) : IShower {
             },
             PendingIntent.FLAG_ONE_SHOT
         )
-        builder.setDeleteIntent(cancelIntent).build()
+        builder.setDeleteIntent(deleteIntent).build()
     }
 
     abstract fun onBuilderCreated(builder: NotificationCompat.Builder)
