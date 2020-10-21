@@ -8,27 +8,25 @@ import com.like.update.downloader.IDownloader
 import com.like.update.shower.IShower
 import java.io.File
 
-class Update(private val mContext: Context) {
-    private val mDownloadController: DownloadController by lazy {
-        DownloadController(mContext)
+object Update {
+    private val mDownloadController by lazy {
+        DownloadController()
     }
 
     /**
      *
      * @param shower        显示者。库中提供了：[com.like.update.shower.ForceUpdateDialogShower]、[com.like.update.shower.NotificationShower]
      */
-    fun setShower(shower: IShower): Update {
+    fun shower(shower: IShower) {
         mDownloadController.mShower = shower
-        return this
     }
 
     /**
      *
      * @param downloader    下载工具类。库中提供了：[com.like.update.downloader.RetrofitDownloader]
      */
-    fun setDownloader(downloader: IDownloader): Update {
+    fun downloader(downloader: IDownloader) {
         mDownloadController.mDownloader = downloader
-        return this
     }
 
     /**
@@ -36,15 +34,14 @@ class Update(private val mContext: Context) {
      * @param url           下载地址。必须设置。可以是完整路径或者子路径
      * @param versionName   下载的文件的版本号。可以不设置。用于区分下载的文件的版本。如果url中包括了版本号，可以不传。
      */
-    fun setUrl(url: String, versionName: String = ""): Update {
-        mDownloadController.mUrl = url
-        mDownloadController.mDownloadFile = createDownloadFile(mContext, url, versionName)
-        return this
-    }
-
     @RequiresPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    fun download() {
-        mDownloadController.cont()
+    fun download(context: Context, url: String, versionName: String = "") {
+        mDownloadController.apply {
+            this.context = context
+            this.mUrl = url
+            this.mDownloadFile = createDownloadFile(context, url, versionName)
+            this.cont()
+        }
     }
 
     fun cancel() {

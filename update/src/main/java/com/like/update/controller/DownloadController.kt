@@ -6,7 +6,6 @@ import android.content.Context
 import androidx.annotation.RequiresPermission
 import com.like.common.util.ApkUtils
 import com.like.livedatabus.liveDataBusRegister
-import com.like.livedatabus.liveDataBusUnRegister
 import com.like.livedatabus_annotations.BusObserver
 import com.like.retrofit.download.model.DownloadInfo
 import com.like.update.downloader.IDownloader
@@ -27,7 +26,7 @@ import java.io.File
  * Manifest.permission.WRITE_EXTERNAL_STORAGE
  */
 @SuppressLint("MissingPermission")
-internal class DownloadController(private val context: Context) {
+internal class DownloadController {
     companion object {
         private const val PAUSE = "pause"
     }
@@ -35,6 +34,7 @@ internal class DownloadController(private val context: Context) {
     private var downloadJob: Job? = null
     var mShower: IShower? = null
     var mDownloader: IDownloader? = null
+    var context: Context? = null
     var mUrl: String = ""
     var mDownloadFile: File? = null
 
@@ -46,9 +46,6 @@ internal class DownloadController(private val context: Context) {
     fun cancel() {
         downloadJob?.cancel()
         downloadJob = null
-        liveDataBusUnRegister(TAG_PAUSE_OR_CONTINUE)
-        liveDataBusUnRegister(TAG_PAUSE)
-        liveDataBusUnRegister(TAG_CONTINUE)
     }
 
     /**
@@ -98,7 +95,9 @@ internal class DownloadController(private val context: Context) {
                             shower.onDownloadRunning(it.cachedSize, it.totalSize)
                         }
                         DownloadInfo.Status.STATUS_SUCCESSFUL -> {
-                            ApkUtils.install(context, downloadFile)
+                            context?.let {
+                                ApkUtils.install(it, downloadFile)
+                            }
                             downloadJob = null
                             shower.onDownloadSuccess(it.totalSize)
                         }

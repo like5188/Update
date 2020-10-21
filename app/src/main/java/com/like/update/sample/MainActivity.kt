@@ -24,7 +24,6 @@ class MainActivity : AppCompatActivity() {
         DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
     }
 
-    private val mUpdate: Update by lazy { Update(this) }
     private val mRetrofitDownloader by lazy {
         RetrofitDownloader(DownloadRetrofit().init(RequestConfig(application)))
     }
@@ -75,10 +74,9 @@ class MainActivity : AppCompatActivity() {
                 .setCancelable(false)
                 .setPositiveButton("马上更新") { dialog, _ ->
                     // 开始更新
-                    mUpdate.setUrl(updateInfo.downUrl, updateInfo.versionName)
-                        .setShower(mNotificationShower)
-                        .setDownloader(mRetrofitDownloader)
-                        .download()
+                    Update.shower(mNotificationShower)
+                    Update.downloader(mRetrofitDownloader)
+                    Update.download(this, updateInfo.downUrl, updateInfo.versionName)
                     dialog.dismiss()
                 }
                 .setNegativeButton("下次再说") { dialog, _ ->
@@ -107,10 +105,9 @@ class MainActivity : AppCompatActivity() {
                 .setCancelable(false)
                 .setPositiveButton("马上更新") { dialog, _ ->
                     // 开始更新
-                    mUpdate.setUrl(updateInfo.downUrl, updateInfo.versionName)
-                        .setShower(mForceUpdateDialogShower)
-                        .setDownloader(mRetrofitDownloader)
-                        .download()
+                    Update.shower(mForceUpdateDialogShower)
+                    Update.downloader(mRetrofitDownloader)
+                    Update.download(this, updateInfo.downUrl, updateInfo.versionName)
                     dialog.dismiss()
                 }.setNegativeButton("暂不使用") { dialog, _ ->
                     // 需要强制更新，但是不更新
