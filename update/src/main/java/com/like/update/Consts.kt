@@ -4,3 +4,4 @@ package com.like.update
 internal const val TAG_PAUSE_OR_CONTINUE = "tag_pauseOrContinue"
 internal const val TAG_PAUSE = "tag_pause"
 internal const val TAG_CONTINUE = "tag_continue"
+internal const val TAG_CANCEL = "tag_cancel"

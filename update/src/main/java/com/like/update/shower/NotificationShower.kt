@@ -16,6 +16,7 @@ import com.like.common.util.notifyNotification
 import com.like.common.util.toDataStorageUnit
 import com.like.livedatabus.LiveDataBus
 import com.like.retrofit.util.getCustomNetworkMessage
+import com.like.update.TAG_CANCEL
 import com.like.update.TAG_PAUSE_OR_CONTINUE
 
 /**
@@ -52,7 +53,16 @@ abstract class NotificationShower(private val context: Context) : IShower {
             NotificationCompat.Builder(context).setCustomBigContentView(remoteViews)// 避免显示不完全。
         }
         onBuilderCreated(builder)
-        builder.build()
+        val cancelIntent = PendingIntent.getBroadcast(
+            context,
+            1,
+            Intent("action").apply {
+                putExtra("type", TAG_CANCEL)
+                setPackage(context.packageName)// 8.0以上必须添加包名才能接收到静态广播
+            },
+            PendingIntent.FLAG_ONE_SHOT
+        )
+        builder.setDeleteIntent(cancelIntent).build()
     }
 
     abstract fun onBuilderCreated(builder: NotificationCompat.Builder)
@@ -97,11 +107,10 @@ abstract class NotificationShower(private val context: Context) : IShower {
 class NotificationControllerBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        when (intent?.action) {
-            "action" -> {
-                when (intent.getStringExtra("type")) {
-                    TAG_PAUSE_OR_CONTINUE -> LiveDataBus.post(TAG_PAUSE_OR_CONTINUE)
-                }
+        if (intent?.action == "action") {
+            when (intent.getStringExtra("type")) {
+                TAG_PAUSE_OR_CONTINUE -> LiveDataBus.post(TAG_PAUSE_OR_CONTINUE)
+                TAG_CANCEL -> LiveDataBus.post(TAG_CANCEL)
             }
         }
     }

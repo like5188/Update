@@ -15,6 +15,7 @@ import com.like.common.util.toDataStorageUnit
 import com.like.livedatabus.LiveDataBus
 import com.like.retrofit.util.getCustomNetworkMessage
 import com.like.update.R
+import com.like.update.TAG_CANCEL
 import com.like.update.TAG_CONTINUE
 import com.like.update.TAG_PAUSE
 import com.like.update.databinding.DialogFragmentDownloadProgressBinding
@@ -97,7 +98,7 @@ class ForceUpdateDialogShower(private val fragmentManager: FragmentManager) : IS
                 LiveDataBus.post(TAG_CONTINUE)
             }
             binding.ivClose.setOnClickListener {
-                LiveDataBus.post(TAG_PAUSE)
+                LiveDataBus.post(TAG_CANCEL)
                 dismiss()
                 AppUtils.exitApp(context)
             }

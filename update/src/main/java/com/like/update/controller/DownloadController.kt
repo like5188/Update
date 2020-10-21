@@ -9,7 +9,9 @@ import com.like.livedatabus.liveDataBusRegister
 import com.like.livedatabus.liveDataBusUnRegister
 import com.like.livedatabus_annotations.BusObserver
 import com.like.retrofit.download.model.DownloadInfo
+import com.like.update.TAG_CANCEL
 import com.like.update.TAG_CONTINUE
+import com.like.update.TAG_PAUSE
 import com.like.update.TAG_PAUSE_OR_CONTINUE
 import com.like.update.downloader.IDownloader
 import com.like.update.shower.IShower
@@ -27,7 +29,7 @@ import java.io.File
 @SuppressLint("MissingPermission")
 internal class DownloadController(private val context: Context) {
     companion object {
-        private const val TAG_PAUSE = "pause"
+        private const val PAUSE = "pause"
     }
 
     private var downloadJob: Job? = null
@@ -40,6 +42,7 @@ internal class DownloadController(private val context: Context) {
         liveDataBusRegister()
     }
 
+    @BusObserver([TAG_CANCEL])
     fun cancel() {
         downloadJob?.cancel()
         downloadJob = null
@@ -62,7 +65,7 @@ internal class DownloadController(private val context: Context) {
 
     @BusObserver([TAG_PAUSE])
     fun pause() {
-        downloadJob?.cancel(CancellationException(TAG_PAUSE))
+        downloadJob?.cancel(CancellationException(PAUSE))
         downloadJob = null
     }
 
@@ -81,15 +84,12 @@ internal class DownloadController(private val context: Context) {
 
         // 下载
         downloadJob = GlobalScope.launch(Dispatchers.Main) {
-            downloader.download(
-                url,
-                downloadFile,
-                Runtime.getRuntime().availableProcessors()
-            ).onCompletion {
-                if (it is CancellationException && it.message == TAG_PAUSE) {
-                    shower.onDownloadPaused()
+            downloader.download(url, downloadFile)
+                .onCompletion {
+                    if (it is CancellationException && it.message == PAUSE) {
+                        shower.onDownloadPaused()
+                    }
                 }
-            }
                 .collect {
                     when (it.status) {
                         DownloadInfo.Status.STATUS_PENDING -> {
