@@ -75,8 +75,8 @@ class MainActivity : AppCompatActivity() {
                 .setPositiveButton("马上更新") { dialog, _ ->
                     // 开始更新
                     Update.shower(mNotificationShower)
-                    Update.downloader(mRetrofitDownloader)
-                    Update.download(this, updateInfo.downUrl, updateInfo.versionName)
+                        .downloader(mRetrofitDownloader)
+                        .download(this, updateInfo.downUrl, updateInfo.versionName)
                     dialog.dismiss()
                 }
                 .setNegativeButton("下次再说") { dialog, _ ->
@@ -106,8 +106,8 @@ class MainActivity : AppCompatActivity() {
                 .setPositiveButton("马上更新") { dialog, _ ->
                     // 开始更新
                     Update.shower(mForceUpdateDialogShower)
-                    Update.downloader(mRetrofitDownloader)
-                    Update.download(this, updateInfo.downUrl, updateInfo.versionName)
+                        .downloader(mRetrofitDownloader)
+                        .download(this, updateInfo.downUrl, updateInfo.versionName)
                     dialog.dismiss()
                 }.setNegativeButton("暂不使用") { dialog, _ ->
                     // 需要强制更新，但是不更新

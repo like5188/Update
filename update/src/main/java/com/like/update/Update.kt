@@ -15,18 +15,22 @@ object Update {
 
     /**
      *
-     * @param shower        显示者。库中提供了：[com.like.update.shower.ForceUpdateDialogShower]、[com.like.update.shower.NotificationShower]
+     * @param shower        显示者。
+     * 库中提供了：[com.like.update.shower.ForceUpdateDialogShower]、[com.like.update.shower.NotificationShower]
      */
-    fun shower(shower: IShower) {
+    fun shower(shower: IShower): Update {
         mDownloadController.mShower = shower
+        return this
     }
 
     /**
      *
-     * @param downloader    下载工具类。库中提供了：[com.like.update.downloader.RetrofitDownloader]
+     * @param downloader    下载工具类。
+     * 库中提供了：[com.like.update.downloader.RetrofitDownloader]
      */
-    fun downloader(downloader: IDownloader) {
+    fun downloader(downloader: IDownloader): Update {
         mDownloadController.mDownloader = downloader
+        return this
     }
 
     /**
