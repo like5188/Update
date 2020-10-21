@@ -16,8 +16,8 @@ import com.like.common.util.notifyNotification
 import com.like.common.util.toDataStorageUnit
 import com.like.livedatabus.LiveDataBus
 import com.like.retrofit.util.getCustomNetworkMessage
-import com.like.update.TAG_CANCEL
-import com.like.update.TAG_PAUSE_OR_CONTINUE
+import com.like.update.util.TAG_CANCEL
+import com.like.update.util.TAG_PAUSE_OR_CONTINUE
 
 /**
  * 普通更新使用通知栏显示进度条

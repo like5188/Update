@@ -9,12 +9,12 @@ import com.like.livedatabus.liveDataBusRegister
 import com.like.livedatabus.liveDataBusUnRegister
 import com.like.livedatabus_annotations.BusObserver
 import com.like.retrofit.download.model.DownloadInfo
-import com.like.update.TAG_CANCEL
-import com.like.update.TAG_CONTINUE
-import com.like.update.TAG_PAUSE
-import com.like.update.TAG_PAUSE_OR_CONTINUE
 import com.like.update.downloader.IDownloader
 import com.like.update.shower.IShower
+import com.like.update.util.TAG_CANCEL
+import com.like.update.util.TAG_CONTINUE
+import com.like.update.util.TAG_PAUSE
+import com.like.update.util.TAG_PAUSE_OR_CONTINUE
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion

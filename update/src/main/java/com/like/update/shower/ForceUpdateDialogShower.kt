@@ -15,9 +15,9 @@ import com.like.common.util.toDataStorageUnit
 import com.like.livedatabus.LiveDataBus
 import com.like.retrofit.util.getCustomNetworkMessage
 import com.like.update.R
-import com.like.update.TAG_CANCEL
-import com.like.update.TAG_CONTINUE
-import com.like.update.TAG_PAUSE
+import com.like.update.util.TAG_CANCEL
+import com.like.update.util.TAG_CONTINUE
+import com.like.update.util.TAG_PAUSE
 import com.like.update.databinding.DialogFragmentDownloadProgressBinding
 import kotlin.math.roundToInt
 
