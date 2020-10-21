@@ -31,16 +31,16 @@ internal class DownloadController(private val context: Context) {
     }
 
     private var downloadJob: Job? = null
-    internal var mShower: IShower? = null
-    internal var mDownloader: IDownloader? = null
-    internal var mUrl: String = ""
-    internal var mDownloadFile: File? = null
+    var mShower: IShower? = null
+    var mDownloader: IDownloader? = null
+    var mUrl: String = ""
+    var mDownloadFile: File? = null
 
     init {
         liveDataBusRegister()
     }
 
-    internal fun cancel() {
+    fun cancel() {
         downloadJob?.cancel()
         downloadJob = null
         liveDataBusUnRegister(TAG_PAUSE_OR_CONTINUE)
@@ -52,7 +52,7 @@ internal class DownloadController(private val context: Context) {
      * 如果是暂停，就继续下载；如果是下载中，就暂停
      */
     @BusObserver([TAG_PAUSE_OR_CONTINUE])
-    internal fun pauseOrContinue() {
+    fun pauseOrContinue() {
         if (downloadJob != null) {// 正在下载
             pause()
         } else {
@@ -61,15 +61,14 @@ internal class DownloadController(private val context: Context) {
     }
 
     @BusObserver([TAG_PAUSE])
-    internal fun pause() {
+    fun pause() {
         downloadJob?.cancel(CancellationException(TAG_PAUSE))
         downloadJob = null
     }
 
     @RequiresPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    @Throws(Exception::class)
     @BusObserver([TAG_CONTINUE])
-    internal fun cont() {
+    fun cont() {
         val downloadFile = mDownloadFile ?: throw IllegalArgumentException("wrong download url")
         val downloader = mDownloader ?: throw IllegalArgumentException("you must call setDownloader() to set IDownloader")
         val shower = mShower ?: throw IllegalArgumentException("you must call setShower() to set IShower")
