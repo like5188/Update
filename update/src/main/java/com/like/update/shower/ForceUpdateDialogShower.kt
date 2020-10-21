@@ -1,17 +1,22 @@
 package com.like.update.shower
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
 import com.like.common.base.BaseDialogFragment
 import com.like.common.util.AppUtils
 import com.like.common.util.toDataStorageUnit
+import com.like.livedatabus.LiveDataBus
+import com.like.retrofit.util.getCustomNetworkMessage
+import com.like.update.R
 import com.like.update.TAG_CONTINUE
 import com.like.update.TAG_PAUSE
-import com.like.livedatabus.LiveDataBus
-import com.like.retrofit.utils.getCustomNetworkMessage
-import com.like.update.R
 import com.like.update.databinding.DialogFragmentDownloadProgressBinding
 import kotlin.math.roundToInt
 
@@ -19,7 +24,7 @@ import kotlin.math.roundToInt
  * 强制更新使用对话框显示进度条
  */
 class ForceUpdateDialogShower(private val fragmentManager: FragmentManager) : IShower {
-    private val downloadProgressDialog = DefaultDownloadProgressDialog()
+    private val downloadProgressDialog = DefaultDownloadProgressDialog.newInstance()
 
     override fun onDownloadPending() {
         downloadProgressDialog.show(fragmentManager)
@@ -32,12 +37,11 @@ class ForceUpdateDialogShower(private val fragmentManager: FragmentManager) : IS
         downloadProgressDialog.setProgress(currentSize, totalSize)
     }
 
-    override fun onDownloadPaused(currentSize: Long, totalSize: Long) {
+    override fun onDownloadPaused() {
         downloadProgressDialog.setTitle("已经暂停下载")
-        downloadProgressDialog.setProgress(currentSize, totalSize)
     }
 
-    override fun onDownloadSuccessful(totalSize: Long) {
+    override fun onDownloadSuccess(totalSize: Long) {
         downloadProgressDialog.setTitle("下载完成！")
         downloadProgressDialog.setProgress(totalSize, totalSize)
     }
@@ -47,13 +51,45 @@ class ForceUpdateDialogShower(private val fragmentManager: FragmentManager) : IS
         downloadProgressDialog.setMessage(throwable.getCustomNetworkMessage())
     }
 
-    class DefaultDownloadProgressDialog : BaseDialogFragment<DialogFragmentDownloadProgressBinding>() {
-
-        override fun getLayoutResId(): Int {
-            return R.layout.dialog_fragment_download_progress
+    class DefaultDownloadProgressDialog private constructor() : BaseDialogFragment() {
+        companion object {
+            fun newInstance(): DefaultDownloadProgressDialog {
+                return DefaultDownloadProgressDialog()
+            }
         }
 
-        override fun initView(binding: DialogFragmentDownloadProgressBinding, savedInstanceState: Bundle?) {
+        private var mBinding: DialogFragmentDownloadProgressBinding? = null
+        private var mTitleText = "标题"
+            set(value) {
+                mBinding?.tvTitle?.text = value
+                field = value
+            }
+        private var mTitleTextColor = Color.parseColor("#333333")
+            set(value) {
+                mBinding?.tvTitle?.setTextColor(value)
+                field = value
+            }
+        private var mMessageText = "内容"
+            set(value) {
+                mBinding?.tvMessage?.visibility = if (value.isEmpty()) View.GONE else View.VISIBLE
+                mBinding?.tvMessage?.text = value
+                field = value
+            }
+        private var mMessageTextColor = Color.parseColor("#ef4a51")
+            set(value) {
+                mBinding?.tvMessage?.setTextColor(value)
+                field = value
+            }
+
+        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+            val binding = DataBindingUtil.inflate<DialogFragmentDownloadProgressBinding>(
+                inflater,
+                R.layout.dialog_fragment_download_progress,
+                container,
+                false
+            )
+            mBinding = binding
+
             binding.btnPause.setOnClickListener {
                 LiveDataBus.post(TAG_PAUSE)
             }
@@ -65,15 +101,36 @@ class ForceUpdateDialogShower(private val fragmentManager: FragmentManager) : IS
                 dismiss()
                 AppUtils.exitApp(context)
             }
-            resources.displayMetrics?.widthPixels?.let { screenWidth ->
-                setWidth((screenWidth * 0.9).toInt())
-            }
             isCancelable = false
+
+            if (savedInstanceState != null) {
+                setTitle(savedInstanceState.getString("mTitle") ?: "", savedInstanceState.getInt("mTitleTextColor"))
+                setMessage(savedInstanceState.getString("mMessage") ?: "", savedInstanceState.getInt("mMessageTextColor"))
+            } else {
+                setTitle(mTitleText, mTitleTextColor)
+                setMessage(mMessageText, mMessageTextColor)
+            }
+            return binding.root
+        }
+
+        override fun onSaveInstanceState(outState: Bundle) {
+            super.onSaveInstanceState(outState)
+            outState.putString("mTitle", mTitleText)
+            outState.putInt("mTitleTextColor", mTitleTextColor)
+            outState.putString("mMessage", mMessageText)
+            outState.putInt("mMessageTextColor", mMessageTextColor)
+        }
+
+        override fun initLayoutParams(layoutParams: WindowManager.LayoutParams) {
+            super.initLayoutParams(layoutParams)
+            resources.displayMetrics?.widthPixels?.let {
+                layoutParams.width = (it * 0.9).toInt()
+            }
         }
 
         @SuppressLint("SetTextI18n")
         fun setProgress(currentSize: Long, totalSize: Long) {
-            getBinding()?.apply {
+            mBinding?.apply {
                 val progress = (currentSize.toFloat() / totalSize.toFloat() * 100).roundToInt()
                 pbProgress.progress = progress
                 tvPercent.text = "$progress%"
@@ -81,17 +138,14 @@ class ForceUpdateDialogShower(private val fragmentManager: FragmentManager) : IS
             }
         }
 
-        fun setTitle(title: String) {
-            getBinding()?.apply {
-                tvTitle.text = title
-            }
+        fun setTitle(text: String = mTitleText, textColor: Int = mTitleTextColor) {
+            mTitleText = text
+            mTitleTextColor = textColor
         }
 
-        fun setMessage(msg: String) {
-            getBinding()?.apply {
-                tvMessage.visibility = if (msg.isEmpty()) View.GONE else View.VISIBLE
-                tvMessage.text = msg
-            }
+        fun setMessage(text: String = mMessageText, textColor: Int = mMessageTextColor) {
+            mMessageText = text
+            mMessageTextColor = textColor
         }
 
     }

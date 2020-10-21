@@ -14,9 +14,9 @@ import com.like.common.util.cancelNotification
 import com.like.common.util.createNotificationChannel
 import com.like.common.util.notifyNotification
 import com.like.common.util.toDataStorageUnit
-import com.like.update.TAG_PAUSE_OR_CONTINUE
 import com.like.livedatabus.LiveDataBus
-import com.like.retrofit.utils.getCustomNetworkMessage
+import com.like.retrofit.util.getCustomNetworkMessage
+import com.like.update.TAG_PAUSE_OR_CONTINUE
 
 /**
  * 普通更新使用通知栏显示进度条
@@ -29,13 +29,13 @@ abstract class NotificationShower(private val context: Context) : IShower {
     private val remoteViews by lazy {
         val remoteViews = RemoteViews(context.packageName, R.layout.view_download_progress_for_notification)
         val controlIntent = PendingIntent.getBroadcast(
-                context,
-                1,
-                Intent("action").apply {
-                    putExtra("type", TAG_PAUSE_OR_CONTINUE)
-                    setPackage(context.packageName)// 8.0以上必须添加包名才能接收到静态广播
-                },
-                PendingIntent.FLAG_UPDATE_CURRENT
+            context,
+            1,
+            Intent("action").apply {
+                putExtra("type", TAG_PAUSE_OR_CONTINUE)
+                setPackage(context.packageName)// 8.0以上必须添加包名才能接收到静态广播
+            },
+            PendingIntent.FLAG_UPDATE_CURRENT
         )
         remoteViews.setOnClickPendingIntent(R.id.iv_controller, controlIntent)
         onRemoteViewsCreated(remoteViews)
@@ -68,11 +68,11 @@ abstract class NotificationShower(private val context: Context) : IShower {
         updateNotification("下载中，请稍后...", currentSize, totalSize)
     }
 
-    override fun onDownloadPaused(currentSize: Long, totalSize: Long) {
-        updateNotification("已经暂停下载", currentSize, totalSize, true)
+    override fun onDownloadPaused() {
+        updateNotification("已经暂停下载", pause = true)
     }
 
-    override fun onDownloadSuccessful(totalSize: Long) {
+    override fun onDownloadSuccess(totalSize: Long) {
         context.cancelNotification(NOTIFICATION_ID)
     }
 

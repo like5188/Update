@@ -11,18 +11,40 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.databinding.DataBindingUtil
 import com.like.common.util.AppUtils
+import com.like.retrofit.RequestConfig
+import com.like.retrofit.download.DownloadRetrofit
 import com.like.update.Update
+import com.like.update.downloader.RetrofitDownloader
 import com.like.update.sample.databinding.ActivityMainBinding
 import com.like.update.shower.ForceUpdateDialogShower
 import com.like.update.shower.NotificationShower
 
 class MainActivity : AppCompatActivity() {
-
     private val mBinding: ActivityMainBinding by lazy {
         DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
     }
 
     private val mUpdate: Update by lazy { Update(this) }
+    private val mRetrofitDownloader = RetrofitDownloader(DownloadRetrofit().init(RequestConfig(application)))
+    private val mForceUpdateDialogShower = ForceUpdateDialogShower(this.supportFragmentManager)
+    private val mNotificationShower = object : NotificationShower(this@MainActivity) {
+        override fun onBuilderCreated(builder: NotificationCompat.Builder) {
+            builder.setSmallIcon(R.mipmap.ic_launcher)
+                .setContentIntent(
+                    PendingIntent.getActivity(
+                        this@MainActivity,
+                        2,
+                        Intent(this@MainActivity, MainActivity::class.java),
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                    )
+                )
+        }
+
+        override fun onRemoteViewsCreated(remoteViews: RemoteViews) {
+            remoteViews.setImageViewResource(R.id.iv_small_icon, R.drawable.icon_0)
+            remoteViews.setImageViewResource(R.id.iv_large_icon, R.drawable.banner)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,27 +70,9 @@ class MainActivity : AppCompatActivity() {
                 .setPositiveButton("马上更新") { dialog, _ ->
                     // 开始更新
                     mUpdate.setUrl(updateInfo.downUrl, updateInfo.versionName)
-                    mUpdate.setShower(
-                        object : NotificationShower(this@MainActivity) {
-                            override fun onBuilderCreated(builder: NotificationCompat.Builder) {
-                                builder.setSmallIcon(R.mipmap.ic_launcher)
-                                    .setContentIntent(
-                                        PendingIntent.getActivity(
-                                            this@MainActivity,
-                                            2,
-                                            Intent(this@MainActivity, MainActivity::class.java),
-                                            PendingIntent.FLAG_UPDATE_CURRENT
-                                        )
-                                    )
-                            }
-
-                            override fun onRemoteViewsCreated(remoteViews: RemoteViews) {
-                                remoteViews.setImageViewResource(R.id.iv_small_icon, R.drawable.icon_0)
-                                remoteViews.setImageViewResource(R.id.iv_large_icon, R.drawable.banner)
-                            }
-                        }
-                    )
-                    mUpdate.download()
+                        .setShower(mNotificationShower)
+                        .setDownloader(mRetrofitDownloader)
+                        .download()
                     dialog.dismiss()
                 }
                 .setNegativeButton("下次再说") { dialog, _ ->
@@ -98,8 +102,9 @@ class MainActivity : AppCompatActivity() {
                 .setPositiveButton("马上更新") { dialog, _ ->
                     // 开始更新
                     mUpdate.setUrl(updateInfo.downUrl, updateInfo.versionName)
-                    mUpdate.setShower(ForceUpdateDialogShower(this.supportFragmentManager))
-                    mUpdate.download()
+                        .setShower(mForceUpdateDialogShower)
+                        .setDownloader(mRetrofitDownloader)
+                        .download()
                     dialog.dismiss()
                 }.setNegativeButton("暂不使用") { dialog, _ ->
                     // 需要强制更新，但是不更新

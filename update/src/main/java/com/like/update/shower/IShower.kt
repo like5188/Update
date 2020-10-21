@@ -18,12 +18,12 @@ interface IShower {
     /**
      * 暂停下载
      */
-    fun onDownloadPaused(currentSize: Long, totalSize: Long)
+    fun onDownloadPaused()
 
     /**
      * 下载成功
      */
-    fun onDownloadSuccessful(totalSize: Long)
+    fun onDownloadSuccess(totalSize: Long)
 
     /**
      * 下载失败

@@ -1,17 +1,11 @@
 package com.like.update.downloader
 
-import android.app.Application
-import com.like.retrofit.RetrofitUtil
-import com.like.retrofit.download.livedata.DownloadLiveData
-import com.like.retrofit.utils.RequestConfig
+import com.like.retrofit.download.DownloadRetrofit
+import com.like.retrofit.download.model.DownloadInfo
+import kotlinx.coroutines.flow.Flow
 import java.io.File
 
-class RetrofitDownloader(application: Application) : IDownloader {
-    init {
-        RetrofitUtil.getInstance().apply {
-            initDownload(RequestConfig(application))
-        }
-    }
+class RetrofitDownloader(private val downloadRetrofit: DownloadRetrofit) : IDownloader {
 
     override suspend fun download(
         url: String,
@@ -19,8 +13,14 @@ class RetrofitDownloader(application: Application) : IDownloader {
         threadCount: Int,
         deleteCache: Boolean,
         callbackInterval: Long
-    ): DownloadLiveData {
-        return RetrofitUtil.getInstance().download(url, downloadFile, threadCount, deleteCache, callbackInterval)
+    ): Flow<DownloadInfo> {
+        return downloadRetrofit.download(
+            url,
+            downloadFile,
+            threadCount,
+            deleteCache,
+            callbackInterval
+        )
     }
 
 }

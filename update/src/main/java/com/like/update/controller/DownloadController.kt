@@ -2,53 +2,47 @@ package com.like.update.controller
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.annotation.RequiresPermission
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import com.like.common.util.ApkUtils
-import com.like.update.TAG_CONTINUE
-import com.like.update.TAG_PAUSE
-import com.like.update.TAG_PAUSE_OR_CONTINUE
-import com.like.update.downloader.IDownloader
-import com.like.update.shower.IShower
 import com.like.livedatabus.liveDataBusRegister
 import com.like.livedatabus.liveDataBusUnRegister
 import com.like.livedatabus_annotations.BusObserver
-import com.like.retrofit.download.DownloadInfo
-import com.like.retrofit.download.livedata.DownloadLiveData
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.like.retrofit.download.model.DownloadInfo
+import com.like.update.TAG_CONTINUE
+import com.like.update.TAG_PAUSE_OR_CONTINUE
+import com.like.update.downloader.IDownloader
+import com.like.update.shower.IShower
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onCompletion
 import java.io.File
 
 /**
- * 下载控制类。通过[com.like.livedatabus.LiveDataBus]来控制。
+ * 下载控制类
  *
  * Manifest.permission.INTERNET
  * Manifest.permission.WRITE_EXTERNAL_STORAGE
  */
 @SuppressLint("MissingPermission")
-class DownloadController {
-    private var mCallLiveData: DownloadLiveData? = null
-    private val mApkUtils: ApkUtils
-    var mShower: IShower? = null
-    var mDownloader: IDownloader? = null
-    var mUrl: String = ""
-    var mDownloadFile: File? = null
+internal class DownloadController(private val context: Context) {
+    companion object {
+        private const val TAG_PAUSE = "pause"
+    }
 
-    constructor(fragmentActivity: FragmentActivity) {
-        mApkUtils = ApkUtils(fragmentActivity)
+    private var downloadJob: Job? = null
+    internal var mShower: IShower? = null
+    internal var mDownloader: IDownloader? = null
+    internal var mUrl: String = ""
+    internal var mDownloadFile: File? = null
+
+    init {
         liveDataBusRegister()
     }
 
-    constructor(fragment: Fragment) {
-        mApkUtils = ApkUtils(fragment)
-        liveDataBusRegister()
-    }
-
-    fun cancel() {
-        mCallLiveData?.cancel()
-        mCallLiveData = null
+    internal fun cancel() {
+        downloadJob?.cancel()
+        downloadJob = null
         liveDataBusUnRegister(TAG_PAUSE_OR_CONTINUE)
         liveDataBusUnRegister(TAG_PAUSE)
         liveDataBusUnRegister(TAG_CONTINUE)
@@ -58,8 +52,8 @@ class DownloadController {
      * 如果是暂停，就继续下载；如果是下载中，就暂停
      */
     @BusObserver([TAG_PAUSE_OR_CONTINUE])
-    fun pauseOrContinue() {
-        if (mCallLiveData != null) {// 正在下载
+    internal fun pauseOrContinue() {
+        if (downloadJob != null) {// 正在下载
             pause()
         } else {
             cont()
@@ -67,48 +61,54 @@ class DownloadController {
     }
 
     @BusObserver([TAG_PAUSE])
-    fun pause() {
-        mCallLiveData?.pause()
-        mCallLiveData = null
+    internal fun pause() {
+        downloadJob?.cancel(CancellationException(TAG_PAUSE))
+        downloadJob = null
     }
 
     @RequiresPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    @Throws(Exception::class)
     @BusObserver([TAG_CONTINUE])
-    fun cont() {
-        val downloader = mDownloader ?: return
-        val downloadFile = mDownloadFile ?: return
-        val shower = mShower ?: return
+    internal fun cont() {
+        val downloadFile = mDownloadFile ?: throw IllegalArgumentException("wrong download url")
+        val downloader = mDownloader ?: throw IllegalArgumentException("you must call setDownloader() to set IDownloader")
+        val shower = mShower ?: throw IllegalArgumentException("you must call setShower() to set IShower")
         val url = mUrl
-        if (url.isEmpty()) return
+        if (url.isEmpty()) throw IllegalArgumentException("url can not be empty")
 
-        if (mCallLiveData != null) return// 正在下载
+        if (downloadJob != null) return// 正在下载
 
         shower.onDownloadPending()
 
         // 下载
-        GlobalScope.launch(Dispatchers.Main) {
-            mCallLiveData = downloader.download(url, downloadFile, 3)
-            mCallLiveData?.observeForever { downloadInfo ->
-                when (downloadInfo.status) {
-                    DownloadInfo.Status.STATUS_PENDING -> {
-                    }
-                    DownloadInfo.Status.STATUS_RUNNING -> {
-                        shower.onDownloadRunning(downloadInfo.cachedSize, downloadInfo.totalSize)
-                    }
-                    DownloadInfo.Status.STATUS_PAUSED -> {
-                        shower.onDownloadPaused(downloadInfo.cachedSize, downloadInfo.totalSize)
-                    }
-                    DownloadInfo.Status.STATUS_SUCCESSFUL -> {
-                        mApkUtils.install(downloadFile)
-                        mCallLiveData = null
-                        shower.onDownloadSuccessful(downloadInfo.totalSize)
-                    }
-                    DownloadInfo.Status.STATUS_FAILED -> {
-                        shower.onDownloadFailed(downloadInfo.throwable)
-                        mCallLiveData = null// 用于点击继续重试
-                    }
+        downloadJob = GlobalScope.launch(Dispatchers.Main) {
+            downloader.download(
+                url,
+                downloadFile,
+                Runtime.getRuntime().availableProcessors()
+            ).onCompletion {
+                if (it is CancellationException && it.message == TAG_PAUSE) {
+                    shower.onDownloadPaused()
                 }
             }
+                .collect {
+                    when (it.status) {
+                        DownloadInfo.Status.STATUS_PENDING -> {
+                        }
+                        DownloadInfo.Status.STATUS_RUNNING -> {
+                            shower.onDownloadRunning(it.cachedSize, it.totalSize)
+                        }
+                        DownloadInfo.Status.STATUS_SUCCESSFUL -> {
+                            ApkUtils.install(context, downloadFile)
+                            downloadJob = null
+                            shower.onDownloadSuccess(it.totalSize)
+                        }
+                        DownloadInfo.Status.STATUS_FAILED -> {
+                            shower.onDownloadFailed(it.throwable)
+                            downloadJob = null// 用于点击继续重试
+                        }
+                    }
+                }
         }
     }
 
