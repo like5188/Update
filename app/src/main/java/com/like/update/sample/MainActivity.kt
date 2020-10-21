@@ -20,29 +20,35 @@ import com.like.update.shower.ForceUpdateDialogShower
 import com.like.update.shower.NotificationShower
 
 class MainActivity : AppCompatActivity() {
-    private val mBinding: ActivityMainBinding by lazy {
+    private val mBinding by lazy {
         DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
     }
 
     private val mUpdate: Update by lazy { Update(this) }
-    private val mRetrofitDownloader = RetrofitDownloader(DownloadRetrofit().init(RequestConfig(application)))
-    private val mForceUpdateDialogShower = ForceUpdateDialogShower(this.supportFragmentManager)
-    private val mNotificationShower = object : NotificationShower(this@MainActivity) {
-        override fun onBuilderCreated(builder: NotificationCompat.Builder) {
-            builder.setSmallIcon(R.mipmap.ic_launcher)
-                .setContentIntent(
-                    PendingIntent.getActivity(
-                        this@MainActivity,
-                        2,
-                        Intent(this@MainActivity, MainActivity::class.java),
-                        PendingIntent.FLAG_UPDATE_CURRENT
+    private val mRetrofitDownloader by lazy {
+        RetrofitDownloader(DownloadRetrofit().init(RequestConfig(application)))
+    }
+    private val mForceUpdateDialogShower by lazy {
+        ForceUpdateDialogShower(this.supportFragmentManager)
+    }
+    private val mNotificationShower by lazy {
+        object : NotificationShower(this@MainActivity) {
+            override fun onBuilderCreated(builder: NotificationCompat.Builder) {
+                builder.setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentIntent(
+                        PendingIntent.getActivity(
+                            this@MainActivity,
+                            2,
+                            Intent(this@MainActivity, MainActivity::class.java),
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                        )
                     )
-                )
-        }
+            }
 
-        override fun onRemoteViewsCreated(remoteViews: RemoteViews) {
-            remoteViews.setImageViewResource(R.id.iv_small_icon, R.drawable.icon_0)
-            remoteViews.setImageViewResource(R.id.iv_large_icon, R.drawable.banner)
+            override fun onRemoteViewsCreated(remoteViews: RemoteViews) {
+                remoteViews.setImageViewResource(R.id.iv_small_icon, R.drawable.icon_0)
+                remoteViews.setImageViewResource(R.id.iv_large_icon, R.drawable.banner)
+            }
         }
     }
 
