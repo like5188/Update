@@ -3,6 +3,7 @@ package com.like.update
 import android.Manifest
 import android.content.Context
 import androidx.annotation.RequiresPermission
+import com.like.common.util.StoragePrivateUtils
 import com.like.update.controller.DownloadController
 import com.like.update.downloader.IDownloader
 import com.like.update.shower.IShower
@@ -61,7 +62,9 @@ object Update {
         } else {
             url.substring(url.lastIndexOf("/") + 1)// 从url获取的文件名，包括后缀。"xxx.xxx"
         }
-        File(context.cacheDir, downloadFileName)
+        val cacheDir = StoragePrivateUtils.ExternalStorageHelper.getExternalCacheDir(context)
+            ?: StoragePrivateUtils.InternalStorageHelper.getCacheDir(context)
+        File(cacheDir, downloadFileName)
     } catch (e: Exception) {
         null
     }
