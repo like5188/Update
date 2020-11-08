@@ -24,9 +24,9 @@
 在Module的gradle中加入：
 ```groovy
     dependencies {
-        implementation 'com.github.like5188:Common:6.1.4'
-        implementation 'com.github.like5188.LiveDataBus:livedatabus:2.0.6'
-        implementation 'com.github.like5188.LiveDataBus:livedatabus_annotations:2.0.6'
+        implementation 'com.github.like5188:Common:6.2.3'
+        implementation 'com.github.like5188.LiveDataBus:livedatabus:2.1.0'
+        implementation 'com.github.like5188.LiveDataBus:livedatabus_annotations:2.1.0'
 
         implementation 'com.github.like5188:Update:版本号'
     }
@@ -34,5 +34,5 @@
 
 2、使用
 ```java
-    Update.shower(mNotificationShower).downloader(mRetrofitDownloader).download(this, downUrl, versionName)
+    Update().shower(mNotificationShower).downloader(mRetrofitDownloader).download(this, downUrl, versionName)
 ```

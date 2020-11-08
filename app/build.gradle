@@ -75,7 +75,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     implementation 'com.github.like5188:Common:6.2.3'
-    implementation 'com.github.like5188.LiveDataBus:livedatabus:2.0.8'
-    implementation 'com.github.like5188.LiveDataBus:livedatabus_annotations:2.0.8'
+    implementation 'com.github.like5188.LiveDataBus:livedatabus:2.1.0'
+    implementation 'com.github.like5188.LiveDataBus:livedatabus_annotations:2.1.0'
     implementation project(':update')
 }
