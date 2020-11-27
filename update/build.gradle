@@ -45,7 +45,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     // 这个库的引用不能用 compileOnly 否则 gradle:3.5.2 编译不过，但是 gradle:3.2.1 能编译通过。
-    implementation 'com.github.like5188:Common:6.2.7'
+    implementation 'com.github.like5188:Common:6.2.8'
     compileOnly 'com.github.like5188.LiveDataBus:livedatabus:2.1.1'
 //    gradle 3.2.1 不需要添加这个引用 ， 升级到 3.5.2 后必须添加 ， 否则会提示找不到livedatabus_annotations中的类 。
     compileOnly 'com.github.like5188.LiveDataBus:livedatabus_annotations:2.1.1'
