@@ -5,7 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.annotation.RequiresPermission
 import com.like.common.util.ApkUtils
-import com.like.livedatabus.liveDataBusRegister
+import com.like.livedatabus.LiveDataBus
 import com.like.livedatabus_annotations.BusObserver
 import com.like.retrofit.download.model.DownloadInfo
 import com.like.update.downloader.IDownloader
@@ -39,7 +39,7 @@ internal class DownloadController {
     var mDownloadFile: File? = null
 
     init {
-        liveDataBusRegister()
+        LiveDataBus.register(this)
     }
 
     @BusObserver([TAG_CANCEL])

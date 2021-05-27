@@ -13,11 +13,11 @@ import com.like.common.R
 import com.like.common.util.cancelNotification
 import com.like.common.util.createNotificationChannel
 import com.like.common.util.notifyNotification
-import com.like.common.util.toDataStorageUnit
 import com.like.livedatabus.LiveDataBus
 import com.like.retrofit.util.getCustomNetworkMessage
 import com.like.update.util.TAG_CANCEL
 import com.like.update.util.TAG_PAUSE_OR_CONTINUE
+import com.like.update.util.toDataStorageUnit
 import kotlin.math.roundToInt
 
 /**
@@ -29,7 +29,8 @@ abstract class NotificationShower(private val context: Context) : IShower {
     }
 
     private val remoteViews by lazy {
-        val remoteViews = RemoteViews(context.packageName, R.layout.view_download_progress_for_notification)
+        val remoteViews =
+            RemoteViews(context.packageName, R.layout.view_download_progress_for_notification)
         val controlIntent = PendingIntent.getBroadcast(
             context,
             1,
@@ -47,7 +48,8 @@ abstract class NotificationShower(private val context: Context) : IShower {
         val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channelId = "update"
             val channelName = "更新"
-            val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
+            val channel =
+                NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
             context.createNotificationChannel(channel)
             NotificationCompat.Builder(context, channelId).setCustomContentView(remoteViews)
         } else {
@@ -91,13 +93,24 @@ abstract class NotificationShower(private val context: Context) : IShower {
         updateNotification(throwable.getCustomNetworkMessage())
     }
 
-    private fun updateNotification(status: String, currentSize: Long = -1, totalSize: Long = -1, pause: Boolean = false) {
+    private fun updateNotification(
+        status: String,
+        currentSize: Long = -1,
+        totalSize: Long = -1,
+        pause: Boolean = false
+    ) {
         remoteViews.setTextViewText(R.id.tv_status, status)
-        remoteViews.setImageViewResource(R.id.iv_controller, if (pause) R.drawable.download_start else R.drawable.download_pause)
+        remoteViews.setImageViewResource(
+            R.id.iv_controller,
+            if (pause) R.drawable.download_start else R.drawable.download_pause
+        )
         if (currentSize > 0 && totalSize > 0) {
             val progress = (currentSize.toFloat() / totalSize.toFloat() * 100).roundToInt()
             remoteViews.setTextViewText(R.id.tv_percent, "$progress%")
-            remoteViews.setTextViewText(R.id.tv_size, "${currentSize.toDataStorageUnit()}/${totalSize.toDataStorageUnit()}")
+            remoteViews.setTextViewText(
+                R.id.tv_size,
+                "${currentSize.toDataStorageUnit()}/${totalSize.toDataStorageUnit()}"
+            )
             remoteViews.setProgressBar(R.id.pb_progress, 100, progress, false)
         }
         context.notifyNotification(NOTIFICATION_ID, notification)

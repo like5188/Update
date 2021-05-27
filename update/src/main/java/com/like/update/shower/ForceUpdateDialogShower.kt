@@ -11,14 +11,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
 import com.like.common.base.BaseDialogFragment
 import com.like.common.util.AppUtils
-import com.like.common.util.toDataStorageUnit
 import com.like.livedatabus.LiveDataBus
 import com.like.retrofit.util.getCustomNetworkMessage
 import com.like.update.R
+import com.like.update.databinding.DialogFragmentDownloadProgressBinding
 import com.like.update.util.TAG_CANCEL
 import com.like.update.util.TAG_CONTINUE
 import com.like.update.util.TAG_PAUSE
-import com.like.update.databinding.DialogFragmentDownloadProgressBinding
+import com.like.update.util.toDataStorageUnit
 import kotlin.math.roundToInt
 
 /**
@@ -82,7 +82,11 @@ class ForceUpdateDialogShower(private val fragmentManager: FragmentManager) : IS
                 field = value
             }
 
-        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+        ): View? {
             val binding = DataBindingUtil.inflate<DialogFragmentDownloadProgressBinding>(
                 inflater,
                 R.layout.dialog_fragment_download_progress,
@@ -105,8 +109,14 @@ class ForceUpdateDialogShower(private val fragmentManager: FragmentManager) : IS
             isCancelable = false
 
             if (savedInstanceState != null) {
-                setTitle(savedInstanceState.getString("mTitle") ?: "", savedInstanceState.getInt("mTitleTextColor"))
-                setMessage(savedInstanceState.getString("mMessage") ?: "", savedInstanceState.getInt("mMessageTextColor"))
+                setTitle(
+                    savedInstanceState.getString("mTitle") ?: "",
+                    savedInstanceState.getInt("mTitleTextColor")
+                )
+                setMessage(
+                    savedInstanceState.getString("mMessage") ?: "",
+                    savedInstanceState.getInt("mMessageTextColor")
+                )
             } else {
                 setTitle(mTitleText, mTitleTextColor)
                 setMessage(mMessageText, mMessageTextColor)
