@@ -11,7 +11,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
 import com.like.common.base.BaseDialogFragment
 import com.like.common.util.AppUtils
-import com.like.livedatabus.LiveDataBus
+import com.like.floweventbus.FlowEventBus
 import com.like.retrofit.util.getCustomNetworkMessage
 import com.like.update.R
 import com.like.update.databinding.DialogFragmentDownloadProgressBinding
@@ -96,13 +96,13 @@ class ForceUpdateDialogShower(private val fragmentManager: FragmentManager) : IS
             mBinding = binding
 
             binding.btnPause.setOnClickListener {
-                LiveDataBus.post(TAG_PAUSE)
+                FlowEventBus.post(TAG_PAUSE)
             }
             binding.btnContinue.setOnClickListener {
-                LiveDataBus.post(TAG_CONTINUE)
+                FlowEventBus.post(TAG_CONTINUE)
             }
             binding.ivClose.setOnClickListener {
-                LiveDataBus.post(TAG_CANCEL)
+                FlowEventBus.post(TAG_CANCEL)
                 dismiss()
                 AppUtils.exitApp(context)
             }

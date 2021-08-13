@@ -5,8 +5,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.annotation.RequiresPermission
 import com.like.common.util.ApkUtils
-import com.like.livedatabus.LiveDataBus
-import com.like.livedatabus_annotations.BusObserver
+import com.like.floweventbus.FlowEventBus
+import com.like.floweventbus_annotations.BusObserver
 import com.like.retrofit.download.model.DownloadInfo
 import com.like.update.downloader.IDownloader
 import com.like.update.shower.IShower
@@ -39,7 +39,7 @@ internal class DownloadController {
     var mDownloadFile: File? = null
 
     init {
-        LiveDataBus.register(this)
+        FlowEventBus.register(this)
     }
 
     @BusObserver([TAG_CANCEL])
@@ -70,8 +70,10 @@ internal class DownloadController {
     @BusObserver([TAG_CONTINUE])
     fun cont() {
         val downloadFile = mDownloadFile ?: throw IllegalArgumentException("wrong download url")
-        val downloader = mDownloader ?: throw IllegalArgumentException("you must call setDownloader() to set IDownloader")
-        val shower = mShower ?: throw IllegalArgumentException("you must call setShower() to set IShower")
+        val downloader = mDownloader
+            ?: throw IllegalArgumentException("you must call setDownloader() to set IDownloader")
+        val shower =
+            mShower ?: throw IllegalArgumentException("you must call setShower() to set IShower")
         val url = mUrl
         if (url.isEmpty()) throw IllegalArgumentException("url can not be empty")
 

@@ -13,7 +13,7 @@ import com.like.common.R
 import com.like.common.util.cancelNotification
 import com.like.common.util.createNotificationChannel
 import com.like.common.util.notifyNotification
-import com.like.livedatabus.LiveDataBus
+import com.like.floweventbus.FlowEventBus
 import com.like.retrofit.util.getCustomNetworkMessage
 import com.like.update.util.TAG_CANCEL
 import com.like.update.util.TAG_PAUSE_OR_CONTINUE
@@ -123,8 +123,8 @@ class NotificationControllerBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent?.action == "action") {
             when (intent.getStringExtra("type")) {
-                TAG_PAUSE_OR_CONTINUE -> LiveDataBus.post(TAG_PAUSE_OR_CONTINUE)
-                TAG_CANCEL -> LiveDataBus.post(TAG_CANCEL)
+                TAG_PAUSE_OR_CONTINUE -> FlowEventBus.post(TAG_PAUSE_OR_CONTINUE)
+                TAG_CANCEL -> FlowEventBus.post(TAG_CANCEL)
             }
         }
     }
