@@ -24,9 +24,11 @@
 在Module的gradle中加入：
 ```groovy
     dependencies {
-        implementation 'com.github.like5188:Common:6.2.3'
-        implementation 'com.github.like5188.LiveDataBus:livedatabus:2.1.0'
-        implementation 'com.github.like5188.LiveDataBus:livedatabus_annotations:2.1.0'
+        implementation 'com.github.like5188:Common:6.6.7'
+        implementation 'com.github.like5188.Retrofit:core:1.1.1'
+        implementation 'com.github.like5188.Retrofit:download:1.1.1'
+        implementation 'com.github.like5188.FlowEventBus:floweventbus:0.0.3'
+        implementation 'com.github.like5188.FlowEventBus:floweventbus_annotations:0.0.3'
 
         implementation 'com.github.like5188:Update:版本号'
     }
