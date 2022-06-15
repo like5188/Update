@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.view.View
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.like.common.util.cancelNotification
@@ -33,6 +34,10 @@ abstract class NotificationShower(private val context: Context) : IShower {
     private val remoteViews by lazy {
         val remoteViews =
             RemoteViews(context.packageName, R.layout.view_download_progress_for_notification)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            remoteViews.setViewVisibility(R.id.iv_small_icon, View.GONE)
+            remoteViews.setViewVisibility(R.id.tv_name, View.GONE)
+        }
         val controlIntent = PendingIntent.getBroadcast(
             context,
             1,
