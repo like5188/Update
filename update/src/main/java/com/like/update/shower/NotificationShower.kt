@@ -1,5 +1,6 @@
 package com.like.update.shower
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -9,12 +10,12 @@ import android.content.Intent
 import android.os.Build
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
-import com.like.common.R
 import com.like.common.util.cancelNotification
 import com.like.common.util.createNotificationChannel
 import com.like.common.util.notifyNotification
 import com.like.floweventbus.FlowEventBus
 import com.like.retrofit.util.getCustomNetworkMessage
+import com.like.update.R
 import com.like.update.util.TAG_CANCEL
 import com.like.update.util.TAG_PAUSE_OR_CONTINUE
 import com.like.update.util.toDataStorageUnit
@@ -23,6 +24,7 @@ import kotlin.math.roundToInt
 /**
  * 普通更新使用通知栏显示进度条
  */
+@SuppressLint("RemoteViewLayout")
 abstract class NotificationShower(private val context: Context) : IShower {
     companion object {
         private const val NOTIFICATION_ID = 1111
