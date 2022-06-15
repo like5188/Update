@@ -9,7 +9,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.widget.RemoteViews
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.like.common.util.cancelNotification
 import com.like.common.util.createNotificationChannel
@@ -31,23 +30,9 @@ abstract class NotificationShower(private val context: Context) : IShower {
         private const val NOTIFICATION_ID = 1111
     }
 
-    // 为了适配 Android 12 折叠时候的通知栏。
-    private val smallRemoteViews by lazy {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val remoteViews =
-                RemoteViews(
-                    context.packageName,
-                    R.layout.view_download_progress_for_notification_small
-                )
-            onSmallRemoteViewsCreated(remoteViews)
-            remoteViews
-        } else {
-            null
-        }
-    }
-    private val bigRemoteViews by lazy {
+    private val remoteViews by lazy {
         val remoteViews =
-            RemoteViews(context.packageName, R.layout.view_download_progress_for_notification_big)
+            RemoteViews(context.packageName, R.layout.view_download_progress_for_notification)
         val controlIntent = PendingIntent.getBroadcast(
             context,
             1,
@@ -74,13 +59,13 @@ abstract class NotificationShower(private val context: Context) : IShower {
             context.createNotificationChannel(channel)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 NotificationCompat.Builder(context, channelId)
-                    .setCustomContentView(smallRemoteViews)
-                    .setCustomBigContentView(bigRemoteViews)
+//                    .setCustomContentView(smallRemoteViews) // Android 12 时可以设置折叠后的视图。
+                    .setCustomBigContentView(remoteViews)
             } else {
-                NotificationCompat.Builder(context, channelId).setCustomContentView(bigRemoteViews)
+                NotificationCompat.Builder(context, channelId).setCustomContentView(remoteViews)
             }
         } else {
-            NotificationCompat.Builder(context).setCustomBigContentView(bigRemoteViews)// 避免显示不完全。
+            NotificationCompat.Builder(context).setCustomBigContentView(remoteViews)// 避免显示不完全。
         }
         onBuilderCreated(builder)
         val deleteIntent = PendingIntent.getBroadcast(
@@ -98,13 +83,6 @@ abstract class NotificationShower(private val context: Context) : IShower {
         )
         builder.setDeleteIntent(deleteIntent).build()
     }
-
-    abstract fun onBuilderCreated(builder: NotificationCompat.Builder)
-
-    abstract fun onRemoteViewsCreated(remoteViews: RemoteViews)
-
-    @RequiresApi(Build.VERSION_CODES.S)
-    abstract fun onSmallRemoteViewsCreated(remoteViews: RemoteViews)
 
     override fun onDownloadPending() {
         updateNotification("正在连接服务器...")
@@ -133,23 +111,26 @@ abstract class NotificationShower(private val context: Context) : IShower {
         totalSize: Long = -1,
         pause: Boolean = false
     ) {
-        bigRemoteViews.setTextViewText(R.id.tv_status, status)
-        bigRemoteViews.setImageViewResource(
+        remoteViews.setTextViewText(R.id.tv_status, status)
+        remoteViews.setImageViewResource(
             R.id.iv_controller,
             if (pause) R.drawable.download_start else R.drawable.download_pause
         )
         if (currentSize > 0 && totalSize > 0) {
             val progress = (currentSize.toFloat() / totalSize.toFloat() * 100).roundToInt()
-            bigRemoteViews.setTextViewText(R.id.tv_percent, "$progress%")
-            bigRemoteViews.setTextViewText(
+            remoteViews.setTextViewText(R.id.tv_percent, "$progress%")
+            remoteViews.setTextViewText(
                 R.id.tv_size,
                 "${currentSize.toDataStorageUnit()}/${totalSize.toDataStorageUnit()}"
             )
-            bigRemoteViews.setProgressBar(R.id.pb_progress, 100, progress, false)
+            remoteViews.setProgressBar(R.id.pb_progress, 100, progress, false)
         }
         context.notifyNotification(NOTIFICATION_ID, notification)
     }
 
+    abstract fun onBuilderCreated(builder: NotificationCompat.Builder)
+
+    abstract fun onRemoteViewsCreated(remoteViews: RemoteViews)
 }
 
 class NotificationControllerBroadcastReceiver : BroadcastReceiver() {

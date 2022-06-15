@@ -53,11 +53,6 @@ class MainActivity : AppCompatActivity() {
                 remoteViews.setImageViewResource(R.id.iv_small_icon, R.drawable.icon_0)
                 remoteViews.setImageViewResource(R.id.iv_large_icon, R.drawable.banner)
             }
-
-            override fun onSmallRemoteViewsCreated(remoteViews: RemoteViews) {
-                val appName = packageManager.getApplicationLabel(applicationInfo)
-                remoteViews.setTextViewText(R.id.tv_name, "$appName 更新中……")
-            }
         }
     }
 
