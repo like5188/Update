@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
     private val mNotificationShower by lazy {
         object : NotificationShower(this@MainActivity) {
             override fun onBuilderCreated(builder: NotificationCompat.Builder) {
-                builder.setSmallIcon(R.drawable.icon_0)
+                builder.setSmallIcon(R.drawable.ic_1)
                     .setContentIntent(
                         PendingIntent.getActivity(
                             this@MainActivity,
@@ -55,7 +55,8 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onSmallRemoteViewsCreated(remoteViews: RemoteViews) {
-                remoteViews.setImageViewResource(R.id.iv_small_icon, R.drawable.icon_0)
+                val appName = packageManager.getApplicationLabel(applicationInfo)
+                remoteViews.setTextViewText(R.id.tv_name, "$appName 更新中……")
             }
         }
     }
