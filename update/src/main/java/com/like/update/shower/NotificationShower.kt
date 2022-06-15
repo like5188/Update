@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.widget.RemoteViews
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.like.common.util.cancelNotification
 import com.like.common.util.createNotificationChannel
@@ -30,9 +31,23 @@ abstract class NotificationShower(private val context: Context) : IShower {
         private const val NOTIFICATION_ID = 1111
     }
 
-    private val remoteViews by lazy {
+    // 为了适配 Android 12 折叠时候的通知栏。
+    private val smallRemoteViews by lazy {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val remoteViews =
+                RemoteViews(
+                    context.packageName,
+                    R.layout.view_download_progress_for_notification_small
+                )
+            onSmallRemoteViewsCreated(remoteViews)
+            remoteViews
+        } else {
+            null
+        }
+    }
+    private val bigRemoteViews by lazy {
         val remoteViews =
-            RemoteViews(context.packageName, R.layout.view_download_progress_for_notification)
+            RemoteViews(context.packageName, R.layout.view_download_progress_for_notification_big)
         val controlIntent = PendingIntent.getBroadcast(
             context,
             1,
@@ -57,9 +72,15 @@ abstract class NotificationShower(private val context: Context) : IShower {
             val channel =
                 NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
             context.createNotificationChannel(channel)
-            NotificationCompat.Builder(context, channelId).setCustomContentView(remoteViews)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                NotificationCompat.Builder(context, channelId)
+                    .setCustomContentView(smallRemoteViews)
+                    .setCustomBigContentView(bigRemoteViews)
+            } else {
+                NotificationCompat.Builder(context, channelId).setCustomContentView(bigRemoteViews)
+            }
         } else {
-            NotificationCompat.Builder(context).setCustomBigContentView(remoteViews)// 避免显示不完全。
+            NotificationCompat.Builder(context).setCustomBigContentView(bigRemoteViews)// 避免显示不完全。
         }
         onBuilderCreated(builder)
         val deleteIntent = PendingIntent.getBroadcast(
@@ -81,6 +102,9 @@ abstract class NotificationShower(private val context: Context) : IShower {
     abstract fun onBuilderCreated(builder: NotificationCompat.Builder)
 
     abstract fun onRemoteViewsCreated(remoteViews: RemoteViews)
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    abstract fun onSmallRemoteViewsCreated(remoteViews: RemoteViews)
 
     override fun onDownloadPending() {
         updateNotification("正在连接服务器...")
@@ -109,19 +133,19 @@ abstract class NotificationShower(private val context: Context) : IShower {
         totalSize: Long = -1,
         pause: Boolean = false
     ) {
-        remoteViews.setTextViewText(R.id.tv_status, status)
-        remoteViews.setImageViewResource(
+        bigRemoteViews.setTextViewText(R.id.tv_status, status)
+        bigRemoteViews.setImageViewResource(
             R.id.iv_controller,
             if (pause) R.drawable.download_start else R.drawable.download_pause
         )
         if (currentSize > 0 && totalSize > 0) {
             val progress = (currentSize.toFloat() / totalSize.toFloat() * 100).roundToInt()
-            remoteViews.setTextViewText(R.id.tv_percent, "$progress%")
-            remoteViews.setTextViewText(
+            bigRemoteViews.setTextViewText(R.id.tv_percent, "$progress%")
+            bigRemoteViews.setTextViewText(
                 R.id.tv_size,
                 "${currentSize.toDataStorageUnit()}/${totalSize.toDataStorageUnit()}"
             )
-            remoteViews.setProgressBar(R.id.pb_progress, 100, progress, false)
+            bigRemoteViews.setProgressBar(R.id.pb_progress, 100, progress, false)
         }
         context.notifyNotification(NOTIFICATION_ID, notification)
     }
