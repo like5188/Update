@@ -5,7 +5,7 @@ import java.text.DecimalFormat
 /**
  * 转换为数据存储单位。KB、MB、GB
  */
-inline fun Long.toDataStorageUnit(): String = DecimalFormat("#0.00").let {
+fun Long.toDataStorageUnit(): String = DecimalFormat("#0.00").let {
     when {
         this <= 0 -> "0.00KB"
         this < 1048576 -> it.format(this.toDouble() / 1024) + "KB"

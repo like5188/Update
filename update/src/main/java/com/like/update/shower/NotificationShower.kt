@@ -90,7 +90,7 @@ abstract class NotificationShower(private val context: Context) : IShower {
     }
 
     override fun onDownloadFailed(throwable: Throwable?) {
-        updateNotification(throwable.getCustomNetworkMessage())
+        updateNotification(throwable.getCustomNetworkMessage() ?: "unknown error")
     }
 
     private fun updateNotification(

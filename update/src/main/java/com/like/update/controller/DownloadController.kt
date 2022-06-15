@@ -39,6 +39,7 @@ internal class DownloadController {
     var mDownloadFile: File? = null
 
     init {
+        FlowEventBus.init()
         FlowEventBus.register(this)
     }
 

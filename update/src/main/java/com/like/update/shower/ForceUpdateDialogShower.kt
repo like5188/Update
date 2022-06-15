@@ -49,7 +49,7 @@ class ForceUpdateDialogShower(private val fragmentManager: FragmentManager) : IS
 
     override fun onDownloadFailed(throwable: Throwable?) {
         downloadProgressDialog.setTitle("下载失败！")
-        downloadProgressDialog.setMessage(throwable.getCustomNetworkMessage())
+        downloadProgressDialog.setMessage(throwable.getCustomNetworkMessage() ?: "unknown error")
     }
 
     class DefaultDownloadProgressDialog private constructor() : BaseDialogFragment() {

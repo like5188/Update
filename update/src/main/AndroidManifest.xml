@@ -5,7 +5,9 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application>
-        <receiver android:name=".shower.NotificationControllerBroadcastReceiver">
+        <receiver
+            android:name=".shower.NotificationControllerBroadcastReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="action" />
             </intent-filter>

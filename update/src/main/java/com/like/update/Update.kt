@@ -3,7 +3,8 @@ package com.like.update
 import android.Manifest
 import android.content.Context
 import androidx.annotation.RequiresPermission
-import com.like.common.util.StoragePrivateUtils
+import com.like.common.util.storage.external.ExternalStoragePrivateUtils
+import com.like.common.util.storage.internal.InternalStorageUtils
 import com.like.update.controller.DownloadController
 import com.like.update.downloader.IDownloader
 import com.like.update.shower.IShower
@@ -53,19 +54,23 @@ object Update {
         mDownloadController.cancel()
     }
 
-    private fun createDownloadFile(context: Context, url: String, versionName: String): File? = try {
-        val downloadFileName = if (versionName.isNotEmpty()) {
-            val lastPointPosition = url.lastIndexOf(".")// 最后一个"."的位置
-            val fileName = url.substring(url.lastIndexOf("/") + 1, lastPointPosition)// 从url获取的文件名，不包括后缀。"xxx"
-            val fileSuffix = url.substring(lastPointPosition)// 后缀。".apk"
-            "$fileName-$versionName$fileSuffix"
-        } else {
-            url.substring(url.lastIndexOf("/") + 1)// 从url获取的文件名，包括后缀。"xxx.xxx"
+    private fun createDownloadFile(context: Context, url: String, versionName: String): File? =
+        try {
+            val downloadFileName = if (versionName.isNotEmpty()) {
+                val lastPointPosition = url.lastIndexOf(".")// 最后一个"."的位置
+                val fileName = url.substring(
+                    url.lastIndexOf("/") + 1,
+                    lastPointPosition
+                )// 从url获取的文件名，不包括后缀。"xxx"
+                val fileSuffix = url.substring(lastPointPosition)// 后缀。".apk"
+                "$fileName-$versionName$fileSuffix"
+            } else {
+                url.substring(url.lastIndexOf("/") + 1)// 从url获取的文件名，包括后缀。"xxx.xxx"
+            }
+            val cacheDir = ExternalStoragePrivateUtils.getExternalCacheDir(context)
+                ?: InternalStorageUtils.getCacheDir(context)
+            File(cacheDir, downloadFileName)
+        } catch (e: Exception) {
+            null
         }
-        val cacheDir = StoragePrivateUtils.ExternalStorageHelper.getExternalCacheDir(context)
-            ?: StoragePrivateUtils.InternalStorageHelper.getCacheDir(context)
-        File(cacheDir, downloadFileName)
-    } catch (e: Exception) {
-        null
-    }
 }
