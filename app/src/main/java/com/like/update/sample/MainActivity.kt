@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity() {
             isUpdate = 1
             versionName = "1.0"
             versionCode = 1
-            downUrl = "https://qd.myapp.com/myapp/qqteam/AndroidQQ/mobileqq_android.apk"
+            downUrl = "https://4239d06f3c431590641fb3607aea127a.dlied1.cdntips.net/download.sj.qq.com/upload/connAssitantDownload/upload/MobileAssistant_2.apk"
             message =
                 "bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改"
         }
@@ -100,7 +100,7 @@ class MainActivity : AppCompatActivity() {
             isUpdate = 2
             versionName = "1.0"
             versionCode = 1
-            downUrl = "https://qd.myapp.com/myapp/qqteam/AndroidQQ/mobileqq_android.apk"
+            downUrl = "https://4239d06f3c431590641fb3607aea127a.dlied1.cdntips.net/download.sj.qq.com/upload/connAssitantDownload/upload/MobileAssistant_2.apk"
             message =
                 "bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改"
         }
