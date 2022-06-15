@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.PendingIntent
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.RemoteViews
@@ -39,7 +40,11 @@ class MainActivity : AppCompatActivity() {
                             this@MainActivity,
                             2,
                             Intent(this@MainActivity, MainActivity::class.java),
-                            PendingIntent.FLAG_UPDATE_CURRENT
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                            } else {
+                                PendingIntent.FLAG_UPDATE_CURRENT
+                            }
                         )
                     )
             }
@@ -64,7 +69,8 @@ class MainActivity : AppCompatActivity() {
             versionName = "1.0"
             versionCode = 1
             downUrl = "https://qd.myapp.com/myapp/qqteam/AndroidQQ/mobileqq_android.apk"
-            message = "bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改"
+            message =
+                "bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改"
         }
         when (updateInfo.isUpdate) {
             // 需要更新
@@ -95,7 +101,8 @@ class MainActivity : AppCompatActivity() {
             versionName = "1.0"
             versionCode = 1
             downUrl = "https://qd.myapp.com/myapp/qqteam/AndroidQQ/mobileqq_android.apk"
-            message = "bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改"
+            message =
+                "bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改"
         }
         when (updateInfo.isUpdate) {
             // 必须强制更新

@@ -38,7 +38,11 @@ abstract class NotificationShower(private val context: Context) : IShower {
                 putExtra("type", TAG_PAUSE_OR_CONTINUE)
                 setPackage(context.packageName)// 8.0以上必须添加包名才能接收到静态广播
             },
-            PendingIntent.FLAG_UPDATE_CURRENT
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            } else {
+                PendingIntent.FLAG_UPDATE_CURRENT
+            }
         )
         remoteViews.setOnClickPendingIntent(R.id.iv_controller, controlIntent)
         onRemoteViewsCreated(remoteViews)
@@ -63,7 +67,11 @@ abstract class NotificationShower(private val context: Context) : IShower {
                 putExtra("type", TAG_CANCEL)
                 setPackage(context.packageName)// 8.0以上必须添加包名才能接收到静态广播
             },
-            PendingIntent.FLAG_ONE_SHOT
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+            } else {
+                PendingIntent.FLAG_ONE_SHOT
+            }
         )
         builder.setDeleteIntent(deleteIntent).build()
     }
