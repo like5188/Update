@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
     private val mNotificationShower by lazy {
         object : NotificationShower(this@MainActivity) {
             override fun onBuilderCreated(builder: NotificationCompat.Builder) {
-                builder.setSmallIcon(R.mipmap.ic_launcher)
+                builder.setSmallIcon(R.drawable.icon_0)
                     .setContentIntent(
                         PendingIntent.getActivity(
                             this@MainActivity,
