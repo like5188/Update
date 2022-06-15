@@ -19,6 +19,7 @@ import com.like.update.downloader.RetrofitDownloader
 import com.like.update.sample.databinding.ActivityMainBinding
 import com.like.update.shower.ForceUpdateDialogShower
 import com.like.update.shower.NotificationShower
+import com.like.update.util.NotificationSettingsUtils
 
 class MainActivity : AppCompatActivity() {
     private val mBinding by lazy {
@@ -36,6 +37,7 @@ class MainActivity : AppCompatActivity() {
             override fun onBuilderCreated(builder: NotificationCompat.Builder) {
                 builder.setSmallIcon(R.drawable.ic_1)
                     .setContentIntent(
+                        // 通知点击行为
                         PendingIntent.getActivity(
                             this@MainActivity,
                             2,
@@ -63,12 +65,27 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("MissingPermission")
     fun update(view: View) {
+        if (!NotificationSettingsUtils.areNotificationsEnabled(this)) {
+            AlertDialog.Builder(this)
+                .setTitle("您需要打开通知权限，才能在通知中看到下载进度！")
+                .setCancelable(false)
+                .setPositiveButton("去设置") { dialog, _ ->
+                    NotificationSettingsUtils.openNotificationSettingsForApp(this)
+                    dialog.dismiss()
+                }
+                .setNegativeButton("下次再说") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
+            return
+        }
         val updateInfo = UpdateInfo().apply {
             // 是否需要更新。0：不需要；1：需要；2：必须更新
             isUpdate = 1
             versionName = "1.0"
             versionCode = 1
-            downUrl = "https://4239d06f3c431590641fb3607aea127a.dlied1.cdntips.net/download.sj.qq.com/upload/connAssitantDownload/upload/MobileAssistant_2.apk"
+            downUrl =
+                "https://4239d06f3c431590641fb3607aea127a.dlied1.cdntips.net/download.sj.qq.com/upload/connAssitantDownload/upload/MobileAssistant_2.apk"
             message =
                 "bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改"
         }
@@ -100,7 +117,8 @@ class MainActivity : AppCompatActivity() {
             isUpdate = 2
             versionName = "1.0"
             versionCode = 1
-            downUrl = "https://4239d06f3c431590641fb3607aea127a.dlied1.cdntips.net/download.sj.qq.com/upload/connAssitantDownload/upload/MobileAssistant_2.apk"
+            downUrl =
+                "https://4239d06f3c431590641fb3607aea127a.dlied1.cdntips.net/download.sj.qq.com/upload/connAssitantDownload/upload/MobileAssistant_2.apk"
             message =
                 "bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改"
         }
