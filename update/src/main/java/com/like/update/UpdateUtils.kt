@@ -1,13 +1,11 @@
 package com.like.update
 
-import android.Manifest
 import android.app.AlertDialog
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
 import android.widget.RemoteViews
 import androidx.annotation.DrawableRes
-import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationCompat
 import androidx.fragment.app.FragmentActivity
 import com.like.common.util.AppUtils
@@ -68,7 +66,6 @@ class UpdateUtils(
     /**
      * 非强制更新
      */
-    @RequiresPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     fun update(message: String, downUrl: String, versionName: String) {
         if (!NotificationSettingsUtils.areNotificationsEnabled(activity)) {
             AlertDialog.Builder(activity)
@@ -105,7 +102,6 @@ class UpdateUtils(
     /**
      * 强制更新
      */
-    @RequiresPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     fun forceUpdate(message: String, downUrl: String, versionName: String) {
         AlertDialog.Builder(activity)
             .setTitle("发现新版本，您必须更新后才能继续使用！")

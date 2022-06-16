@@ -1,15 +1,18 @@
 package com.like.update
 
-import android.Manifest
 import android.content.Context
-import androidx.annotation.RequiresPermission
+import android.os.Environment
 import com.like.common.util.storage.external.ExternalStoragePrivateUtils
-import com.like.common.util.storage.internal.InternalStorageUtils
 import com.like.update.controller.DownloadController
 import com.like.update.downloader.IDownloader
 import com.like.update.shower.IShower
 import java.io.File
 
+/**
+ * 文件下载路径：
+ * context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+ * /storage/emulated/(0/1/...)/Android/data/packageName/files/Download
+ */
 object Update {
     private val mDownloadController by lazy {
         DownloadController()
@@ -40,7 +43,6 @@ object Update {
      * @param url           下载地址。必须设置。可以是完整路径或者子路径
      * @param versionName   下载的文件的版本号。可以不设置。用于区分下载的文件的版本。如果url中包括了版本号，可以不传。
      */
-    @RequiresPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     fun download(context: Context, url: String, versionName: String = "") {
         mDownloadController.apply {
             this.context = context
@@ -67,9 +69,13 @@ object Update {
             } else {
                 url.substring(url.lastIndexOf("/") + 1)// 从url获取的文件名，包括后缀。"xxx.xxx"
             }
-            val cacheDir = ExternalStoragePrivateUtils.getExternalCacheDir(context)
-                ?: InternalStorageUtils.getCacheDir(context)
-            File(cacheDir, downloadFileName)
+            File(
+                ExternalStoragePrivateUtils.getExternalFilesDir(
+                    context,
+                    Environment.DIRECTORY_DOWNLOADS
+                ),
+                downloadFileName
+            )
         } catch (e: Exception) {
             null
         }

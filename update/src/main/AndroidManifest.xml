@@ -5,6 +5,16 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application>
+        <provider
+            android:name="com.like.update.util.DownloadFileProvider"
+            android:authorities="com.like.update.downloadfileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/update_file_paths" />
+        </provider>
+
         <receiver
             android:name=".shower.NotificationControllerBroadcastReceiver"
             android:exported="true">
