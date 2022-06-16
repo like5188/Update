@@ -8,6 +8,6 @@ Manifest merger failed : Attribute provider#androidx.core.content.FileProvider@a
  */
 class DownloadFileProvider : FileProvider(){
     companion object{
-        const val AUTHORITY = "com.like.update.downloadfileprovider"
+        const val AUTHORITY_SUFFIX = ".com.like.update.downloadfileprovider"
     }
 }

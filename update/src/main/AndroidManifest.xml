@@ -7,7 +7,7 @@
     <application>
         <provider
             android:name="com.like.update.util.DownloadFileProvider"
-            android:authorities="com.like.update.downloadfileprovider"
+            android:authorities="${applicationId}.com.like.update.downloadfileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

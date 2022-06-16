@@ -94,7 +94,11 @@ internal class DownloadController {
                         }
                         DownloadInfo.Status.STATUS_SUCCESS -> {
                             context?.let {
-                                install(it, DownloadFileProvider.AUTHORITY, downloadFile)
+                                install(
+                                    it,
+                                    "${it.packageName}${DownloadFileProvider.AUTHORITY_SUFFIX}",
+                                    downloadFile
+                                )
                             }
                             downloadJob = null
                             shower.onDownloadSuccess(it.totalSize)
