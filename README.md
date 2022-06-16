@@ -36,5 +36,8 @@
 
 2、使用
 ```java
+    ① 可以使用Update类：
     Update().shower(mNotificationShower).downloader(mRetrofitDownloader).download(this, downUrl, versionName)
+
+    ② 可以使用UpdateUtils工具类，此类是对Update类的封装，包含了弹出对话框、更新、强制更新的逻辑。
 ```
