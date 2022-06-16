@@ -27,7 +27,8 @@
 
 
     在AndroidManifest.xml文件的application标签下中添加，一般拍照、获取apk文件进行安装时需要：
-    authorities URI 授权 前面为包名，后面为fileprovider固定值，使用包名便于区分
+    name FileProvider或者它的子类。这个名字在同一个应用中是唯一的，否则合并AndroidManifest.xml文件会失败，所以最好是自定义一个类继承自FileProvider。
+    authorities URI 授权 前面为包名，后面为fileprovider固定值，使用包名便于区分。同一个手机中，不同应用不能包含相同authorities的provider，否则不能安装。
     exported="false" 是否支持其它应用调用当前组件 ，要求为flase
     @xml/filepaths 在res目录的xml目录下定义的filepaths.xml文件，名字可以自定义
     <provider
