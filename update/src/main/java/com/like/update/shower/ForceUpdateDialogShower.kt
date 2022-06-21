@@ -34,7 +34,7 @@ class ForceUpdateDialogShower(private val fragmentManager: FragmentManager) : IS
     }
 
     override fun onDownloadRunning(currentSize: Long, totalSize: Long) {
-        downloadProgressDialog.setTitle("下载中，请稍后...")
+        downloadProgressDialog.setTitle("下载中，请稍候...")
         downloadProgressDialog.setProgress(currentSize, totalSize)
     }
 

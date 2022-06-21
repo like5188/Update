@@ -95,7 +95,7 @@ abstract class NotificationShower(private val context: Context) : IShower {
 
     @Synchronized
     override fun onDownloadRunning(currentSize: Long, totalSize: Long) {
-        updateNotification("下载中，请稍后...", currentSize, totalSize)
+        updateNotification("下载中，请稍候...", currentSize, totalSize)
     }
 
     override fun onDownloadPaused() {
