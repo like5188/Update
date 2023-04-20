@@ -45,7 +45,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     // 这个库的引用不能用 compileOnly 否则 gradle:3.5.2 编译不过，但是 gradle:3.2.1 能编译通过。
-    implementation 'com.github.like5188:Common:6.9.2'
+    implementation 'com.github.like5188:Common:7.0.6'
     implementation 'com.github.like5188.Retrofit:core:3.0.4'
     implementation 'com.github.like5188.Retrofit:download:3.0.4'
     implementation 'com.github.like5188.FlowEventBus:floweventbus:1.2.0'

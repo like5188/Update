@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
     fun update(view: View) {
         updateUtils.update(
             "bug修改",
-            "https://4239d06f3c431590641fb3607aea127a.dlied1.cdntips.net/download.sj.qq.com/upload/connAssitantDownload/upload/MobileAssistant_2.apk",
+            "https://qd.myapp.com/myapp/qqteam/AndroidQQ/mobileqq_android.apk",
             "1.0"
         )
     }
@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
     fun forceUpdate(view: View) {
         updateUtils.forceUpdate(
             "bug修改",
-            "https://4239d06f3c431590641fb3607aea127a.dlied1.cdntips.net/download.sj.qq.com/upload/connAssitantDownload/upload/MobileAssistant_2.apk",
+            "https://qd.myapp.com/myapp/qqteam/AndroidQQ/mobileqq_android.apk",
             "1.0"
         )
     }
